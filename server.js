@@ -14,8 +14,10 @@ const loginRouter = express.Router();
 loginRouter.route('/').post(loginController.handleLogin);
 musicRouter.route('/').get(musicController.getMusicHandler(musicRouter));
 
+
 app.use('/music', musicRouter);
 app.use('/login', loginRouter);
+
 // app.post('/login', loginController.handleLogin);
 // app.get('/music',musicController.getMusic);
 app.listen(8000, () => {
