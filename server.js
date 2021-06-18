@@ -1,31 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const fs = require('fs');
 
-const loginController = require('./controllers/login-controller');
-const musicController = require('./controllers/music-controller');
-const logoutController = require('./controllers/logout-controller');
+// Importing Routes
+const loginRouter = require('./Routes/loginRoute');
+const randomSongRouter = require('./Routes/randomSongRoute');
+
 app = express();
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors());
+// Middlewares
+app.use(express.json()); // To get body in req object.
+app.use(cookieParser()); // To manage client side cookies.
+app.use(cors()); // To manage cors policy to accept requests from clients.  TODO: Add all the addresses of client side.
 
-const musicRouter = express.Router();
-const loginRouter = express.Router();
-// const logoutRouter = express.Router();
+app.use('/api/random', randomSongRouter);
+app.use('/api/login', loginRouter);
 
-loginRouter.route('/').post(loginController.handleLogin);
-// logoutRouter.route('/').get(logoutController.handleLogout);
-musicRouter.route('/').get(musicController.getMusicHandler(musicRouter));
-
-
-app.use('/music', musicRouter);
-app.use('/login', loginRouter);
-// app.use('/logout', logoutRouter);
-
+<<<<<<< HEAD
 app.post('/login', loginController.handleLogin);
 // app.get('/music',musicController.getMusic);
+=======
+>>>>>>> 57d82b67eb0a2425343f48e4f8a4055e7b0e1740
 app.listen(8000, () => {
   console.log('server is up');
 });
