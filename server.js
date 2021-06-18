@@ -25,7 +25,7 @@ app.use('/login', loginRouter);
 // app.use('/logout', logoutRouter);
 
 app.post('/login', loginController.handleLogin);
-app.get('/music',musicController.getMusic);
+// app.get('/music',musicController.getMusic);
 app.listen(8000, () => {
   console.log('server is up');
 });
