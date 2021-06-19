@@ -20,6 +20,7 @@ const handleUserLogin = async (req, res) => {
 
     if (payload.email_verified === true) {
       res.json({
+        name: payload.name,
         userIcon: payload.picture,
         isEmailVerified: payload.email_verified,
       });

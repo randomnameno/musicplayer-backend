@@ -34,8 +34,8 @@ const getRandomSongData = (req, res) => {
   const api = new YoutubeMusicApi();
   api.initalize().then((info) => {
     // Searching the song and filtering the results to obtain only songs and fetching the first song.
-    api.search(song).then((result) => {
-      const currSong = result.content.filter((song) => song.type === 'song')[0];
+    api.search(song, 'song').then((result) => {
+      const currSong = result.content[0];
 
       res.json({
         song: currSong.name,
@@ -43,6 +43,8 @@ const getRandomSongData = (req, res) => {
         thumbnail: currSong.thumbnails[1],
         streamAddress: 'http://localhost:8000/api/random/' + currSong.videoId,
       });
+
+      // res.json(currSong);
     });
   });
 };
@@ -51,28 +53,34 @@ const streamRandomSong = (req, res) => {
   // TODO: Receive a JWT and get the data (videoID) from that token and verify it before sending stream.
 
   // Streaming the randomly generated song using the YTDL API by receiving the videoID in link.
-  const videoLink = 'https://www.youtube.com/watch?v=' + req.params.videoId;
+  const link = `https://www.youtube.com/watch?v=${req.params.videoId}`;
 
-  // Setting Headers
-  res.set({
-    Connection: 'keep-alive',
-    'Accept-Ranges': 'bytes',
-    'Content-Type': 'audio/mpeg',
-  });
+  try {
+    // Setting Headers
+    res.set({
+      Connection: 'keep-alive',
+      'Accept-Ranges': 'bytes',
+      'Content-Type': 'audio/mpeg',
+    });
 
-  // Getting ReadableStream using the video link from Youtube.
-  const stream = ytdl(videoLink, {
-    filter: 'audioonly',
-    quality: 'highest',
-  });
+    // Getting ReadableStream using the video link from Youtube.
+    const stream = ytdl(link, {
+      filter: 'audioonly',
+      quality: 'highest',
+    });
 
-  // Setting Content-Lenght header on response event of the ReadableStream object. This header is required to send partial data.
-  stream.on('response', (response) => {
-    res.setHeader('Content-length', response.headers['content-length']);
-  });
+    // Setting Content-Lenght header on response event of the ReadableStream object. This header is required to send partial data.
+    stream.on('response', (response) => {
+      res.setHeader('Content-length', response.headers['content-length']);
+    });
 
-  // Sending the stream.
-  stream.pipe(res);
+    // Sending the stream.
+    stream.pipe(res);
+  } catch (error) {
+    console.error(
+      'This error is in streamRandonSong function. Error: ' + error
+    );
+  }
 };
 
 module.exports = {

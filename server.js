@@ -6,6 +6,7 @@ const fs = require('fs');
 // Importing Routes
 const loginRouter = require('./Routes/loginRoute');
 const randomSongRouter = require('./Routes/randomSongRoute');
+const playerRouter = require('./Routes/playerRoute');
 
 app = express();
 
@@ -16,6 +17,7 @@ app.use(cors()); // To manage cors policy to accept requests from clients.  TODO
 
 app.use('/api/random', randomSongRouter);
 app.use('/api/login', loginRouter);
+app.use('/api', playerRouter);
 
 app.listen(8000, () => {
   console.log('server is up');
