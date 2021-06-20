@@ -25,6 +25,7 @@ const getSongSuggestions = async (req, res) => {
           artist: currSong.artist.name,
           thumbnail: currSong.thumbnails[1],
           streamAddress: 'http://localhost:8000/api/stream/' + currSong.videoId,
+          songId: currSong.videoId,
         };
       })
     );
@@ -84,6 +85,7 @@ const getSearchResults = async (req, res) => {
         artist: item.artist.name,
         thumbnail: item.thumbnails[1],
         streamAddress: 'http://localhost:8000/api/stream/' + item.videoId,
+        songId: item.videoId,
       };
     });
 
