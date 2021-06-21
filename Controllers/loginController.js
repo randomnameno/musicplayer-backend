@@ -1,7 +1,7 @@
 const { OAuth2Client } = require('google-auth-library');
 
 const CLIENT_ID =
-  '390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
+'390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
 
 const handleUserLogin = async (req, res) => {
   // Creating a OAuth2Client object.
