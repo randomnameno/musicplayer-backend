@@ -1,11 +1,11 @@
 const express = require('express');
 
 // Importing Controller
-const loginController = require('../Controllers/songController');
+const randomSongController = require('../Controllers/randomSongController');
 
 const randomSongRouter = express.Router();
 
-randomSongRouter.route('/').get(loginController.getRandomSongData);
-randomSongRouter.route('/:videoId').get(loginController.streamRandomSong);
+randomSongRouter.route('/').get(randomSongController.getRandomSongData);
+randomSongRouter.route('/:videoId').get(randomSongController.streamRandomSong);
 
 module.exports = randomSongRouter;
