@@ -1,5 +1,5 @@
 const { OAuth2Client } = require('google-auth-library');
-
+const FirestoreClient = require('../firestoreClient');
 const CLIENT_ID =
 '390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
 
@@ -19,6 +19,16 @@ const handleUserLogin = async (req, res) => {
     const payload = response.getPayload();
 
     if (payload.email_verified === true) {
+
+      await FirestoreClient.save(
+        'users',
+        {
+          name: payload.name,
+          email: payload.email
+        },
+        payload.email
+
+      );
       res.json({
         name: payload.name,
         userIcon: payload.picture,
