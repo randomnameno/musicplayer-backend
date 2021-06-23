@@ -29,7 +29,7 @@ const getSongSuggestions = async (req, res) => {
         };
       })
     );
-    res.json({ success: true, suggestions: suggestions });
+    res.json({ success: true, suggestions: songInfo });
   } catch (error) {
     console.error('This error is in getSongSuggestion. Error:  ' + error);
     res.json({ success: false });
