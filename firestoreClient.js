@@ -1,7 +1,14 @@
 const Firestore = require('@google-cloud/firestore');
 const admin = require('firebase-admin');
-
+const admin_settings = require('./music-player-d559d-firebase-adminsdk-6pscz-c08aa54f5b.json'); 
 const path = require('path');
+
+admin.initializeApp({
+    credential: admin.credential.cert(admin_settings),
+    databaseURL: 'https://music-player-d559d.firebaseio.com'
+  });
+
+
 class FirestoreClient {
     constructor() {
         this.Firestore = new Firestore({
@@ -11,13 +18,15 @@ class FirestoreClient {
     }
 
     async addLiked(collection,data,docname) {
+
+        const db = admin.database();
+        console.log(db);
+        const ref = db.collection(collection).doc(docname);
+        console.log(docname);
+        console.log('land' + ref);
         const docRef = this.Firestore.collection(collection).doc(docname);
-        await docRef.update({
-            likedSongs: admin.firestore.FieldValue.arrayUnion({
-                songName: data.songName,
-                artistName: data.artistName,
-                thumbnail: data.songThumbnail
-            }),
+        const updatedSongs = await ref.update({
+            likedSongs:admin.firestore.FieldValue.arrayUnion(data.songName)
         });
     }
 

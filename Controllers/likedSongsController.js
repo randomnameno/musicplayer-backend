@@ -1,5 +1,14 @@
 const firestoreClient = require('../firestoreClient');
 
-exports.storeLikedSongs = async (req,res) => {
-    console.log('akhil');
+exports.storeLikedSongs = (req,res) => {
+    const data = req.body;
+    console.log(data);
+    firestoreClient.addLiked(
+        'users',
+        {
+           songName: data.songName
+        },
+        data.email
+    );
+    res.send('updated');
 }

@@ -20,7 +20,6 @@ const handleUserLogin = async (req, res) => {
     const payload = response.getPayload();
 
     if (payload.email_verified === true) {
-      email = payload.email;
       await FirestoreClient.save(
         'users',
         {
@@ -32,6 +31,7 @@ const handleUserLogin = async (req, res) => {
 
       );
       res.json({
+        email:payload.email,
         name: payload.name,
         userIcon: payload.picture,
         isEmailVerified: payload.email_verified,
