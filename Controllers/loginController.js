@@ -1,9 +1,9 @@
 const { OAuth2Client } = require('google-auth-library');
-const FirestoreClient = require('../firestoreClient');
-const CLIENT_ID =
-'390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
+const User = require('../Models/User');
 
-const email = '';
+const CLIENT_ID =
+  '390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
+
 const handleUserLogin = async (req, res) => {
   // Creating a OAuth2Client object.
   const user = new OAuth2Client(CLIENT_ID);
@@ -20,18 +20,14 @@ const handleUserLogin = async (req, res) => {
     const payload = response.getPayload();
 
     if (payload.email_verified === true) {
-      await FirestoreClient.save(
-        'users',
-        {
-          name: payload.name,
-          email: payload.email,
-          likedSongs:[]
-        },
-        payload.email
+      // Creating user object.
+      const user = new User(payload.email, payload.name);
 
-      );
+      // Adding user to Firestore.
+      await user.addToFirestore();
+
       res.json({
-        email:payload.email,
+        email: payload.email,
         name: payload.name,
         userIcon: payload.picture,
         isEmailVerified: payload.email_verified,
@@ -42,9 +38,4 @@ const handleUserLogin = async (req, res) => {
   }
 };
 
-const retUserEmail = (req,res) => {
-  res.send(email);
-}
-
 module.exports.handleUserLogin = handleUserLogin;
-module.exports.retUserEmail = retUserEmail;

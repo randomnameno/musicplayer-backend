@@ -9,53 +9,75 @@ const FieldValue = admin.firestore.FieldValue;
 const db = admin.firestore();
 
 class User {
-  constructor(id, name, email) {
-    this.id = id;
+  constructor(email, name) {
     this.name = name;
     this.email = email;
     this.likedSongs = [];
+
+    this.checkInFireStore = async () => {
+      try {
+        const userRef = db.collection('users').doc(this.email);
+        const doc = await userRef.get();
+        return doc.exists;
+      } catch (error) {
+        console.error('Unable to run checkInFireStore! ' + error);
+      }
+    };
+
+    this.addToFirestore = async () => {
+      try {
+        const isUserPresent = await this.checkInFireStore();
+        if (!isUserPresent) {
+          const userRef = db.collection('users').doc(this.email);
+          await userRef.set({
+            name: this.name,
+            email: this.email,
+            likedSongs: this.likedSongs,
+          });
+        } else {
+          console.log('User is already present in Firestore!');
+        }
+      } catch (error) {
+        console.error('Unable to add User! ' + error);
+      }
+    };
+
+    this.addLikedSong = async (songInfo) => {
+      const userRef = db.collection('users').doc(this.email);
+      await userRef.update({
+        likedSongs: FieldValue.arrayUnion({
+          songId: songInfo.songId,
+          songName: songInfo.songName,
+        }),
+      });
+    };
+
+    this.removeLikedSong = async (songInfo) => {
+      const userRef = db.collection('users').doc(this.email);
+      await userRef.update({
+        likedSongs: FieldValue.arrayRemove({
+          songId: songInfo.songId,
+          songName: songInfo.songName,
+        }),
+      });
+    };
   }
 
-  checkInFireStore = async () => {
+  static async getUserInfo(email) {
     try {
-      const userRef = db.collection('users').doc(this.id);
+      const userRef = db.collection('users').doc(email);
       const doc = await userRef.get();
-      return doc.exists;
-    } catch (error) {
-      console.error('Unable to run checkInFireStore! ' + error);
-    }
-  };
-
-  addToFirestore = async () => {
-    try {
-      if (await this.checkInFireStore()) {
-        const userRef = db.collection('users').doc(this.id);
-        await userRef.set({
-          name: this.name,
-          email: this.email,
-          likedSongs: this.likedSongs,
-        });
+      if (doc.exists) {
+        return new User(doc.data().email, doc.data().name);
       } else {
-        console.log('User is already present in Firestore!');
+        console.log('User does not exists');
+        return null;
       }
     } catch (error) {
-      console.error('Unable to add User! ' + error);
+      console.log('Unable to get User Info: ' + error);
+      return null;
     }
-  };
-
-  addLikedSong = async (songId) => {
-    const userRef = db.collection('users').doc(this.songId);
-    await userRef.update({
-      likedSongs: FieldValue.arrayUnion(songId),
-    });
-  };
-
-  removeLikedSong = async (songId) => {
-    const userRef = db.collection('users').doc(this.songId);
-    await userRef.update({
-      likedSongs: FieldValue.arrayRemove(songId),
-    });
-  };
+  }
 }
 
-export default User;
+module.exports = User;
