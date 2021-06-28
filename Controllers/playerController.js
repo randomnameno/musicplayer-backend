@@ -1,5 +1,6 @@
 const ytdl = require('ytdl-core');
 const YoutubeMusicApi = require('youtube-music-api');
+const User = require('../Models/User');
 
 // Using Youtube Music API to fetch song data from Youtube.
 const api = new YoutubeMusicApi();
@@ -300,6 +301,9 @@ const getSearchResults = async (req, res) => {
     res.json({ success: false, message: 'Search string is not available.' });
   }
 
+  const user = await User.getUserInfo(req.body.email);
+  console.log(user.email);
+
   try {
     const result = await api.search(searchString, 'song');
     const searchResults = result.content.map((item) => {
@@ -309,6 +313,7 @@ const getSearchResults = async (req, res) => {
         thumbnail: item.thumbnails[1],
         streamAddress: 'http://localhost:8000/api/stream/' + item.videoId,
         songId: item.videoId,
+        isLiked: user.likedSongs.includes(item.videoId),
       };
     });
 

@@ -8,7 +8,7 @@ const addToLikedSongs = async (req, res) => {
     const user = await User.getUserInfo(data.email);
 
     // Adding song to user's liked song list.
-    await user.addLikedSong({ songId: data.songId, songName: data.songName });
+    await user.addLikedSong(data.songId);
     res.json({ success: true, message: 'Added to Liked Songs' });
   } catch (error) {
     console.error('The error is in addToLikedSongs: ' + error);
@@ -24,10 +24,7 @@ const removeFormLikedSongs = async (req, res) => {
     const user = await User.getUserInfo(data.email);
 
     // Removing song from user's liked song list
-    await user.removeLikedSong({
-      sondId: data.songId,
-      songName: data.songName,
-    });
+    await user.removeLikedSong(data.songId);
     res.json({ success: true, message: 'Removed From Liked Songs' });
   } catch (error) {
     console.error('The error is in removeFromLikedSongs: ' + error);

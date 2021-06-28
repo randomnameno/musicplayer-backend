@@ -9,6 +9,6 @@ playerRouter
   .route('/suggestions/:songId')
   .get(playerController.getSongSuggestions);
 playerRouter.route('/stream/:songId').get(playerController.streamSong);
-playerRouter.route('/search').get(playerController.getSearchResults);
+playerRouter.route('/search').post(playerController.getSearchResults);
 
 module.exports = playerRouter;

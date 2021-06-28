@@ -42,23 +42,17 @@ class User {
       }
     };
 
-    this.addLikedSong = async (songInfo) => {
+    this.addLikedSong = async (songId) => {
       const userRef = db.collection('users').doc(this.email);
       await userRef.update({
-        likedSongs: FieldValue.arrayUnion({
-          songId: songInfo.songId,
-          songName: songInfo.songName,
-        }),
+        likedSongs: FieldValue.arrayUnion(songId),
       });
     };
 
-    this.removeLikedSong = async (songInfo) => {
+    this.removeLikedSong = async (songId) => {
       const userRef = db.collection('users').doc(this.email);
       await userRef.update({
-        likedSongs: FieldValue.arrayRemove({
-          songId: songInfo.songId,
-          songName: songInfo.songName,
-        }),
+        likedSongs: FieldValue.arrayRemove(songId),
       });
     };
   }
@@ -68,7 +62,10 @@ class User {
       const userRef = db.collection('users').doc(email);
       const doc = await userRef.get();
       if (doc.exists) {
-        return new User(doc.data().email, doc.data().name);
+        const data = doc.data();
+        const user = new User(data.email, data.name);
+        user.likedSongs = data.likedSongs;
+        return user;
       } else {
         console.log('User does not exists');
         return null;
