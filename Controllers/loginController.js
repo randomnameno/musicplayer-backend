@@ -1,40 +1,40 @@
-const { OAuth2Client } = require('google-auth-library');
 const User = require('../Models/User');
-
-const CLIENT_ID =
-  '390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
+const { verifyGoogleToken } = require('../Config/verifyToken');
 
 const handleUserLogin = async (req, res) => {
-  // Creating a OAuth2Client object.
-  const user = new OAuth2Client(CLIENT_ID);
-  const tokenId = req.body.tokenId;
+  // Getting the token.
+  if (!req.headers['authorization']) {
+    // If Authorization header is not found then sending back the response.
+    res.json({
+      success: false,
+      message: 'Authorization header is not present.',
+    });
+  }
+  const token = req.headers['authorization'].split(' ')[1];
 
   try {
-    // Verifying the tokenId received from the client.
-    const response = await user.verifyIdToken({
-      idToken: tokenId,
-      audience: CLIENT_ID,
-    });
+    // Verifying the token.
+    const payload = await verifyGoogleToken(token);
 
-    // Fetching the payload from the token.
-    const payload = response.getPayload();
-
-    if (payload.email_verified === true) {
+    if (payload.email_verified) {
       // Creating user object.
-      const user = new User(payload.email, payload.name);
+      let user = new User(payload.email, payload.name);
 
       // Adding user to Firestore.
       await user.addToFirestore();
 
       res.json({
+        isEmailVerified: payload.email_verified,
         email: payload.email,
         name: payload.name,
         userIcon: payload.picture,
-        isEmailVerified: payload.email_verified,
       });
     }
   } catch (error) {
     console.log(`This error is in handleLogin: ${error}`);
+    res.json({
+      isEmailVerified: false,
+    });
   }
 };
 

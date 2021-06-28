@@ -32,6 +32,14 @@ const removeFormLikedSongs = async (req, res) => {
   }
 };
 
+const getLikedSongs = async (req, res) => {
+  try {
+  } catch (error) {
+    console.error('The error is in getLikedSongs: ' + error);
+    res.json({ success: false, message: error });
+  }
+};
+
 module.exports = {
   addToLikedSongs: addToLikedSongs,
   removeFormLikedSongs: removeFormLikedSongs,
