@@ -35,7 +35,8 @@ class User {
             likedSongs: this.likedSongs,
           });
         } else {
-          console.log('User is already present in Firestore!');
+          // User is already present in Firestore.
+          // console.log('User is already present in Firestore!');
         }
       } catch (error) {
         console.error('Unable to add User! ' + error);

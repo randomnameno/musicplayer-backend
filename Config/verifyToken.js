@@ -21,6 +21,7 @@ const verifyGoogleToken = async (token) => {
     return payload;
   } catch (error) {
     console.error('Could not verify the token: ' + error);
+    return { email_verified: false };
   }
 };
 
